@@ -1,0 +1,11 @@
+Hover:
+  ShowAKA: NO
+InlayHints:
+  Enabled: NO
+  ParameterNames: YES
+  DeducedTypes: YES
+  Designators: YES
+  BlockEnd: YES
+  TypeNameLimit: 24
+CompileFlags:
+  Add: [-std=c++2a]
