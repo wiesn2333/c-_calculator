@@ -63,6 +63,9 @@ double primary() {
       ts.get();
     }
     return val;
+  } else if (tok.type == SUB) {
+    ts.get();
+    return -primary();
   } else {
     return number();
   }
@@ -73,10 +76,6 @@ double number() {
   if (tok.type == NUM) {
     ts.get();
     return tok.value;
-  }
-  if (tok.type == SUB) {
-    ts.get();
-    return -number();
   }
   throw std::runtime_error("运算符缺少数字");
 }
