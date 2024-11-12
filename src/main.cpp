@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <exception>
 #include "token.hpp"
@@ -16,11 +17,11 @@ double expression() {
     tok = ts.peek();
     switch (tok.type) {
       case ADD:
-        ts.get();
+        ts.pop();
         lval += term();
         break;
       case SUB:
-        ts.get();
+        ts.pop();
         lval -= term();
         break;
       default:
@@ -36,11 +37,11 @@ double term() {
     tok = ts.peek();
     switch (tok.type) {
       case MUT:
-        ts.get();
+        ts.pop();
         lval *= primary();
         break;
       case DIV:
-        ts.get();
+        ts.pop();
         rval = primary();
         if (rval == 0)
           throw std::runtime_error("除数不能为 0");
@@ -55,26 +56,41 @@ double term() {
 double primary() {
   auto tok = ts.peek();
   if (tok.type == L_PAR) {
-    ts.get();
+    ts.pop();
     auto val = expression();
     if (ts.peek().type != R_PAR) {
       throw std::runtime_error("括号未闭合");
     } else {
-      ts.get();
+      ts.pop();
     }
     return val;
   } else if (tok.type == SUB) {
-    ts.get();
+    ts.pop();
     return -primary();
   } else {
-    return number();
+    double val = number();
+    while (true) {
+      tok = ts.peek();
+      switch (tok.type) {
+        case POW:
+          ts.pop();
+          val = std::pow(val, primary());
+          break;
+        case EXP:
+          ts.pop();
+          val = val * std::pow(10, primary());
+          break;
+        default:
+          return val;
+      }
+    }
   }
 }
 
 double number() {
   Token tok = ts.peek();
   if (tok.type == NUM) {
-    ts.get();
+    ts.pop();
     return tok.value;
   }
   throw std::runtime_error("运算符缺少数字");

@@ -2,7 +2,7 @@
 #include <cctype>
 #include <iostream>
 
-Token Token_stream::get() {
+Token Token_stream::pop() {
   if (hasbuf) {
     Token tok = buffer;
     hasbuf = false;
@@ -29,6 +29,11 @@ Token Token_stream::get() {
         return Token{MUT};
       case '/':
         return Token{DIV};
+      case '^':
+        return Token{POW};
+      case 'e':
+      case 'E':
+        return Token{EXP};
       case '(':
         return Token{L_PAR};
       case ')':
@@ -46,7 +51,7 @@ Token Token_stream::peek() {
   if (hasbuf)
     return buffer;
   else {
-    buffer = get();
+    buffer = pop();
     hasbuf = true;
     return buffer;
   }
@@ -54,7 +59,7 @@ Token Token_stream::peek() {
 
 void Token_stream::clear() {
   while (peek().type != END) {
-    get();
+    pop();
   }
   hasbuf = false;
 }
